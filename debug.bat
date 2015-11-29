@@ -1,0 +1,1 @@
+call mvnDebug tomcat7:run
