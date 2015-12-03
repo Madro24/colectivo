@@ -95,6 +95,14 @@ public class CompanyServiceImpl implements CompanyService {
 		return CompanyUtils.populateDTO(company);
 	}
 
+	@Override
+	public boolean exists(Long companyId){
+		if(companyId == null) return false;
+		
+		return (companyRepository.findOne(companyId) != null) ? true: false;
+		
+	}
+	
 	private List<ErrorMessage> validateCompany(CompanyDTO company, String requestType, Long ciaID){
 		List<ErrorMessage> errors = new ArrayList<ErrorMessage>();
 		

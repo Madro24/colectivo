@@ -11,4 +11,5 @@ public interface CompanyService {
 	CompanyDTO createCompany(CompanyDTO companyDto);
 	CompanyDTO updateCompany(CompanyDTO company, Long companyId);
 	void deleteCompany(CompanyDTO company);
+	boolean exists(Long companyId);
 }
