@@ -19,9 +19,9 @@ import com.sstacorp.colectivo.jpa.entity.Company;
 import com.sstacorp.colectivo.jpa.entity.ImageRelation;
 import com.sstacorp.colectivo.jpa.repositories.CompanyRepository;
 import com.sstacorp.colectivo.jpa.repositories.ImageRelationRepository;
+import com.sstacorp.colectivo.mapping.CompanyUtils;
+import com.sstacorp.colectivo.mapping.ImageUtils;
 import com.sstacorp.colectivo.services.CompanyService;
-import com.sstacorp.colectivo.util.mapping.CompanyUtils;
-import com.sstacorp.colectivo.util.mapping.ImageUtils;
 
 @Service
 public class CompanyServiceImpl implements CompanyService {

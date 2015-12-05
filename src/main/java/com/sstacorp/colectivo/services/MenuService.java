@@ -11,4 +11,5 @@ public interface MenuService {
 	MenuDTO createMenu(MenuDTO menu, Long companyId);
 	MenuDTO updateMenu(MenuDTO menu, Long companyId, Long menuId);
 	MenuDTO deleteMenu(Long companyId, Long menuId);
+	Boolean exists(Long menuId);
 }

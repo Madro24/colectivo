@@ -1,4 +1,4 @@
-package com.sstacorp.colectivo.util.mapping;
+package com.sstacorp.colectivo.mapping;
 
 import com.sstacorp.colectivo.catalogs.ImageTypes;
 import com.sstacorp.colectivo.dto.ImageDTO;

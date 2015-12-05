@@ -1,4 +1,4 @@
-package com.sstacorp.colectivo.util.mapping;
+package com.sstacorp.colectivo.mapping;
 
 import org.springframework.beans.BeanUtils;
 

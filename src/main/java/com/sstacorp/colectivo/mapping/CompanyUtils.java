@@ -1,4 +1,4 @@
-package com.sstacorp.colectivo.util.mapping;
+package com.sstacorp.colectivo.mapping;
 
 import com.sstacorp.colectivo.dto.CompanyDTO;
 import com.sstacorp.colectivo.jpa.entity.Company;
