@@ -1,4 +1,4 @@
-package com.sstacorp.colectivo.validation;
+package com.sstacorp.colectivo.validator.impl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,14 +13,15 @@ import com.sstacorp.colectivo.dto.MenuDTO;
 import com.sstacorp.colectivo.errors.ErrorTypes;
 import com.sstacorp.colectivo.exceptions.ErrorMessage;
 import com.sstacorp.colectivo.exceptions.ErrorUtil;
-import com.sstacorp.colectivo.services.CompanyService;
 import com.sstacorp.colectivo.services.MenuService;
 import com.sstacorp.colectivo.validation.dto.MenuValidationDTO;
+import com.sstacorp.colectivo.validator.CompanyValidator;
+import com.sstacorp.colectivo.validator.MenuValidator;
 
 @Component
-public class MenuValidator implements ComponentValidator<MenuValidationDTO>{
+public class MenuValidatorImpl implements MenuValidator{
 	@Autowired
-	CompanyService companyService;
+	CompanyValidator companyValidator;
 	
 	@Autowired
 	MenuService menuService;
@@ -30,17 +31,17 @@ public class MenuValidator implements ComponentValidator<MenuValidationDTO>{
 
 		switch(validateDto.getRequestType()){
 		case GET:
-			validateCompany(validateDto.getCompanyId(), errors);
+			companyValidator.validateCompany(validateDto.getCompanyId(), errors);
 			break;
 		case TRACE:
-			validateCompany(validateDto.getCompanyId(), errors);
+			companyValidator.validateCompany(validateDto.getCompanyId(), errors);
 			validateMenu(validateDto.getMenuId(), errors);
 			break;
 		case POST:
 			validateMenuInput(validateDto.getMenu(), errors);
 			break;
 		case PUT:
-			validateCompany(validateDto.getCompanyId(), errors);
+			companyValidator.validateCompany(validateDto.getCompanyId(), errors);
 			validateMatchMenuId(validateDto, errors);
 			validateMenuInput(validateDto.getMenu(), errors);
 			break;
@@ -52,16 +53,8 @@ public class MenuValidator implements ComponentValidator<MenuValidationDTO>{
 		
 	}
 	
-	private void validateCompany(Long companyId, List<ErrorMessage> errors ){
-		if(companyId == null){
-			errors.add(new ErrorMessage(ErrorTypes.ERROR_COMPANY_ID_MISSING));
-		}
-		else if(!companyService.exists(companyId)){
-			errors.add(new ErrorMessage(ErrorTypes.ERROR_COMPANY_NOT_EXISTS));
-		}
-	}
-	
-	private void validateMenu(Long menuId, List<ErrorMessage> errors ){
+	@Override
+	public void validateMenu(Long menuId, List<ErrorMessage> errors ){
 		if(menuId == null){
 			errors.add(new ErrorMessage(ErrorTypes.ERROR_MISSING_MENU_ID));
 		}
@@ -70,12 +63,13 @@ public class MenuValidator implements ComponentValidator<MenuValidationDTO>{
 		}
 	}
 	
-	private void validateMenuInput(MenuDTO menu, List<ErrorMessage> errors){
+	@Override
+	public void validateMenuInput(MenuDTO menu, List<ErrorMessage> errors){
 		if(menu.getCompanyId() == null){
 			errors.add(new ErrorMessage(ErrorTypes.ERROR_COMPANY_ID_MISSING));
 		}
-		else if(!companyService.exists(menu.getCompanyId())){
-			errors.add(new ErrorMessage(ErrorTypes.ERROR_COMPANY_NOT_EXISTS));
+		else{
+			companyValidator.validateCompany(menu.getCompanyId(), errors);
 		}
 		
 		if(menu.getName() == null || menu.getName().isEmpty()){
@@ -104,7 +98,8 @@ public class MenuValidator implements ComponentValidator<MenuValidationDTO>{
 		}
 	}
 	
-	private void validateMatchMenuId(MenuValidationDTO validateDto, List<ErrorMessage> errors){
+	@Override
+	public void validateMatchMenuId(MenuValidationDTO validateDto, List<ErrorMessage> errors){
 		if(!validateDto.getMenuId().equals(validateDto.getMenu().getId())){
 			errors.add(new ErrorMessage(ErrorTypes.ERROR_MISMATCH_MENU_ID));
 		}

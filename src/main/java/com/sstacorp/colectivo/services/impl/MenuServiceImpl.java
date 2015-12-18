@@ -13,8 +13,8 @@ import com.sstacorp.colectivo.jpa.repositories.MenuRepository;
 import com.sstacorp.colectivo.mapping.MenuUtils;
 import com.sstacorp.colectivo.services.CompanyService;
 import com.sstacorp.colectivo.services.MenuService;
-import com.sstacorp.colectivo.validation.ComponentValidator;
 import com.sstacorp.colectivo.validation.dto.MenuValidationDTO;
+import com.sstacorp.colectivo.validator.ComponentValidator;
 
 @Service
 public class MenuServiceImpl implements MenuService {

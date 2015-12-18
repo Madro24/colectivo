@@ -22,14 +22,14 @@ public class Product extends EntityTrackProperties {
 	@Column(name = "PRICE")
 	private Double price;
 	
-	@Column(name = "IMAGE_ID")
-	private Long imageId;
-	
 	@Column(name = "TYPE_CODE")
 	private String typeCode;
 	
 	@Column(name = "COMPANY_ID")
 	private Long companyId;
+	
+	@Column(name = "STATUS_CODE")
+	private String statusCode;
 	
 	public Long getId() {
 		return id;
@@ -55,12 +55,6 @@ public class Product extends EntityTrackProperties {
 	public void setPrice(Double price) {
 		this.price = price;
 	}
-	public Long getImageId() {
-		return imageId;
-	}
-	public void setImageId(Long imageId) {
-		this.imageId = imageId;
-	}
 	public String getTypeCode() {
 		return typeCode;
 	}
@@ -72,6 +66,12 @@ public class Product extends EntityTrackProperties {
 	}
 	public void setCompanyId(Long companyId) {
 		this.companyId = companyId;
+	}
+	public String getStatusCode() {
+		return statusCode;
+	}
+	public void setStatusCode(String statusCode) {
+		this.statusCode = statusCode;
 	}
 	
 }

@@ -1,7 +1,5 @@
 package com.sstacorp.colectivo.mapping;
 
-import java.util.List;
-
 import com.sstacorp.colectivo.dto.MenuDTO;
 import com.sstacorp.colectivo.jpa.entity.Menu;
 
