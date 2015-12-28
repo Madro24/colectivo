@@ -5,6 +5,7 @@ public enum ErrorTypes {
 	ERROR_SYSUSER_FIELD_EMPTY("sysUser","SYSUSER_EMPTY","System User's properties must be filled"),
 	ERROR_PARTICIPANT_FIELD_EMPTY("participant","PARTICIPANT_EMPTY","Participant's properties must be filled"),
 	ERROR_USERNAME_EXIST ("username","INVALID_USERNAME","Username already exists"),
+	
 	//Product - Image errors
 	ERROR_IMAGE_MISSING("upload","IMAGE_MISSING","Must upload an image"),
 	ERROR_IMAGE_TYPE_MISSING("imageTypeCode","IMAGE_TYPE_MISSING","Image type code is required."),
@@ -27,7 +28,33 @@ public enum ErrorTypes {
 	ERROR_COMPANY_NAME_DUPLICATED("name","COMPANY_NAME_DUPLICATED","Company name cannot be duplicated."),
 	ERROR_COMPANY_DISPLAY_NAME_MISSING("displayName","COMPANY_DISPLAY_NAME_MISSING","Company display name is required."),
 	ERROR_COMPANY_DISPLAY_NAME_TOO_LONG("displayName","COMPANY_DISPLAY_NAME_TOO_LONG","Company display name is longer than expected."),
-	ERROR_COMPANY_NOT_EXISTS("company","COMPANY_NOT_EXISTS","Company id not exists.");
+	ERROR_COMPANY_NOT_EXISTS("company","COMPANY_NOT_EXISTS","Company id doesn't exist."),
+	
+	// Menus - Errors
+	ERROR_MISSING_MENU_ID("menuId","MISSING_MENU_ID","A menu id is required"),
+	ERROR_INVALID_MENU_ID("menuId","INVALID_MENU_ID","Menu id doesn't exist"),
+	ERROR_MISSING_MENU_NAME("name","MISSING_MENU_NAME","A menu name is required"),
+	ERROR_MENU_NAME_TOO_LONG("name","MENU_NAME_TOO_LONG","Menu name is too long"),
+	ERROR_MISSING_MENU_TYPE_CODE("menuTypeCode","MISSING_MENU_TYPE","A menu type is required"),
+	ERROR_INVALID_MENU_TYPE_CODE("menuTypeCode","INVALID_MENU_TYPE","A valid menu type is required"),
+	ERROR_MISSING_MENU_STATUS_CODE("statusCode","MISSING_MENU_STATUS","A status code is required"),
+	ERROR_INVALID_MENU_STATUS_CODE("statusCode","INVALID_MENU_STASUS","A valid status code is required"),
+	ERROR_MISMATCH_MENU_ID("menuId","MISMATCH_MENU_ID","Query menu id must be equal to request body menu id "), 
+	
+	// Product - Errors
+	ERROR_MISSING_PRODUCT_NAME("name","MISSING_PRODUCT_NAME","A product name is required"), 
+	ERROR_PRODUCT_NAME_TOO_LONG("name","PRODUCT_NAME_TOO_LONG","Product name is too long than expected"), 
+	ERROR_MISSING_PRODUCT_DESCRIPTION("description","MISSING_PRODUCT_DESCRIPTION","A product description is required"), 
+	ERROR_PRODUCT_DESCRIPTION_TOO_LONG("description","PRODUCT_DESCRIPTION_TOO_LONG","Product description is too long than expected"), 
+	ERROR_INVALID_PRODUCT_TYPE_CODE("typeCode","INVALID_PRODUCT_TYPE","A valid product type is required"), 
+	ERROR_MISSING_PRODUCT_TYPE_CODE("typeCode","MISSING_PRODUCT_TYPE","A product type is required"), 
+	ERROR_INVALID_PRODUCT_STATUS_CODE("statusCode","INVALID_PRODUCT_STATUS","A valid product status is required"), 
+	ERROR_MISSING_PRODUCT_STATUS_CODE("statusCode","MISSING_PRODUCT_STATUS","A product status is required"), 
+	ERROR_MISSING_PRODUCT_ID("productId","MISSING_PRODUCT_ID","A product Id is required"), 
+	ERROR_INVALID_PRODUCT_ID("productId","INVALID_PRODUCT_ID","A valid product id is required"), 
+	ERROR_MISMATCH_PRODUCT_ID("productId","MISMATCH_PRODUCT_ID","Query product Id must be equal to request body product Id"),
+	ERROR_MISMATCH_COMPANY_ID("companyId","MISMATCH_COMPANY_ID","Query company Id must be equal to request body product - companyId"), 
+	ERROR_INVALID_PRODUCT_FOR_COMPANY("productId/companyId","INVALID_PRODUCT_FOR_COMPANY","Product doesn't belong to company");
 	
 	private String field;
 	private String code;

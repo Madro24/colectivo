@@ -41,7 +41,8 @@ public class ProductServiceTest_IT  extends TestCase {
 	
 	@Autowired
 	ProductService productService;
-	
+
+	/*
 	@Test
 	@Transactional
 	public void addProduct_success() throws Exception{
@@ -54,6 +55,7 @@ public class ProductServiceTest_IT  extends TestCase {
 		assertNotNull(productResult.getId());
 		
 	}
+	*/
 	
     // helper methods
     

@@ -10,18 +10,15 @@ import org.springframework.stereotype.Service;
 
 import com.sstacorp.colectivo.constants.CompanyConstants;
 import com.sstacorp.colectivo.dto.CompanyDTO;
-import com.sstacorp.colectivo.dto.ImageDTO;
 import com.sstacorp.colectivo.errors.ErrorTypes;
 import com.sstacorp.colectivo.exceptions.ErrorMessage;
 import com.sstacorp.colectivo.exceptions.ErrorMessageException;
 import com.sstacorp.colectivo.exceptions.ErrorUtil;
 import com.sstacorp.colectivo.jpa.entity.Company;
-import com.sstacorp.colectivo.jpa.entity.ImageRelation;
 import com.sstacorp.colectivo.jpa.repositories.CompanyRepository;
-import com.sstacorp.colectivo.jpa.repositories.ImageRelationRepository;
+import com.sstacorp.colectivo.mapping.CompanyUtils;
 import com.sstacorp.colectivo.services.CompanyService;
-import com.sstacorp.colectivo.util.mapping.CompanyUtils;
-import com.sstacorp.colectivo.util.mapping.ImageUtils;
+import com.sstacorp.colectivo.services.ImageService;
 
 @Service
 public class CompanyServiceImpl implements CompanyService {
@@ -29,7 +26,7 @@ public class CompanyServiceImpl implements CompanyService {
 	CompanyRepository companyRepository;
 	
 	@Autowired
-	ImageRelationRepository imageRelationRepository;
+	ImageService imageService;
 
 	@Override
 	public List<CompanyDTO> getCompanies() {
@@ -42,7 +39,7 @@ public class CompanyServiceImpl implements CompanyService {
 			CompanyDTO company = CompanyUtils.populateDTO(companyIter.next());
 			
 			// Adding image details
-			addingImageDetails(company);
+			company.setImages(imageService.getImageIdReferences(company.getId(), CompanyConstants.COMPANY_IMAGE_TYPES));
 		
 			companyDTOs.add(company);
 		}
@@ -60,7 +57,7 @@ public class CompanyServiceImpl implements CompanyService {
 		CompanyDTO company = CompanyUtils.populateDTO(companyRepository.findOne(id));
 		
 		// Adding image details
-		addingImageDetails(company);
+		company.setImages(imageService.getImageIdReferences(company.getId(), CompanyConstants.COMPANY_IMAGE_TYPES));
 		
 		return company;
 	}
@@ -95,6 +92,14 @@ public class CompanyServiceImpl implements CompanyService {
 		return CompanyUtils.populateDTO(company);
 	}
 
+	@Override
+	public boolean exists(Long companyId){
+		if(companyId == null) return false;
+		
+		return (companyRepository.findOne(companyId) != null) ? true: false;
+		
+	}
+	
 	private List<ErrorMessage> validateCompany(CompanyDTO company, String requestType, Long ciaID){
 		List<ErrorMessage> errors = new ArrayList<ErrorMessage>();
 		
@@ -138,19 +143,5 @@ public class CompanyServiceImpl implements CompanyService {
 		}
 		return errors;
 	}
-	
-	public void addingImageDetails(CompanyDTO company){
-		if(company == null) return;
-		
-		List<ImageDTO> imagesDto = new ArrayList<ImageDTO>();
-		
-		List<ImageRelation> images = imageRelationRepository.findByTargetId(company.getId());
-		for(ImageRelation imageRelation : images){
-			imagesDto.add(ImageUtils.populateDTO(imageRelation));
-		}
-		
-		company.setImages(imagesDto);
-	}
-
 	
 }

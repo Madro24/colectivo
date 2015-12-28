@@ -1,204 +1,185 @@
 package com.sstacorp.colectivo.services.impl;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
+import java.util.List;
 
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.MemoryCacheImageInputStream;
-
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.sstacorp.colectivo.catalogs.ImageTypes;
-import com.sstacorp.colectivo.catalogs.SupportedImageTypes;
+import com.sstacorp.colectivo.constants.ProductConstants;
 import com.sstacorp.colectivo.dto.ProductDTO;
-import com.sstacorp.colectivo.errors.ErrorTypes;
-import com.sstacorp.colectivo.exceptions.ErrorMessage;
-import com.sstacorp.colectivo.exceptions.ErrorMessageException;
-import com.sstacorp.colectivo.jpa.entity.Image;
 import com.sstacorp.colectivo.jpa.entity.Product;
-import com.sstacorp.colectivo.jpa.repositories.ImageRepository;
 import com.sstacorp.colectivo.jpa.repositories.ProductRepository;
+import com.sstacorp.colectivo.mapping.ProductUtils;
+import com.sstacorp.colectivo.services.ImageService;
 import com.sstacorp.colectivo.services.ProductService;
-import com.sstacorp.colectivo.util.ImageManipulationUtil;
+import com.sstacorp.colectivo.validation.dto.ProductValidationDTO;
+import com.sstacorp.colectivo.validator.ComponentValidator;
 
 @Service
 public class ProductServiceImpl implements ProductService {
-	private static final int MAX_IMAGE_NAME_LENGTH = 50;
-	private static final int MAX_IMAGE_DESCRIPTION_LENGTH = 100;
-	
-	private static final int IMAGE_DEFAULT_WIDTH = 1000;
-	private static final int IMAGE_DEFAULT_HEIGHT = 667;
-	
-	private static final int IMAGE_THUMBNAIL_WIDTH = 480;
-	private static final int IMAGE_THUMBNAIL_HEIGHT = 320;
 
 	@Autowired
 	ProductRepository productRepository;
 	
 	@Autowired
-	ImageRepository imageRepository;
+	ImageService imageService;
+	
+	@Autowired
+	ComponentValidator<ProductValidationDTO> productValidator;
 	
 	@Override
-	public ProductDTO addProduct(ProductDTO productDto) {
+	public ProductDTO addProduct(ProductDTO product, Long companyId) {
+		
+		// validate inputs
+		ProductValidationDTO validateDto = new ProductValidationDTO(product, companyId);	
+		productValidator.validateParams(validateDto);
+		
+		return saveProduct(product);
+	}
 
-		if(productDto != null){
-			Product product = productDto.getProductEntity();
 
-			product = productRepository.save(product);
-			
-			if(product != null) return new ProductDTO(product);
-		}
-		return null;
+	@Override
+	public ProductDTO updateProduct(ProductDTO product, Long companyId, Long productId) {
+		
+		// validate inputs
+		ProductValidationDTO validateDto = new ProductValidationDTO(product, companyId, productId);	
+		productValidator.validateParams(validateDto);
+		
+		return saveProduct(product);
 	}
 
 	@Override
-	public ProductDTO updateProduct(Long id, ProductDTO product) {
-		// TODO Auto-generated method stub
-		return null;
+	public void removeProduct(Long companyId, Long productId) {
+
+		// validate inputs
+		ProductValidationDTO validateDto = new ProductValidationDTO(companyId, productId);
+		productValidator.validateParams(validateDto);
+		
+		removeProduct(productId);
+
 	}
 
-	@Override
-	public void removeProduct(Long productId) {
-		// TODO Auto-generated method stub
-
-	}
 
 	@Override
-	public ProductDTO changeImageProduct(Long Id, MultipartFile image) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public Long uploadImage(Long companyId, Long productId, String imageType, MultipartFile image) throws IOException {
 
-	@Override
-	public Long uploadImage(MultipartFile image) {
-		ArrayList<ErrorMessage> errors = new ArrayList<ErrorMessage>();
-
-		if(image == null || image.isEmpty()){
-			throw new ErrorMessageException(new ErrorMessage(ErrorTypes.ERROR_IMAGE_MISSING),HttpStatus.BAD_REQUEST);
+		// validate inputs
+		ProductValidationDTO validateDto = new ProductValidationDTO(companyId, productId);
+		productValidator.validateParams(validateDto);
+		
+		// default image type
+		if(imageType == null || imageType.isEmpty()){
+			imageType = ImageTypes.PRODUCT_MAIN.getCode();
 		}
 		
-		SupportedImageTypes contentType;
-	    try {
-	    	contentType = SupportedImageTypes.valueOf(image.getContentType().toLowerCase());
-	     } catch (IllegalArgumentException ex) {  
-	    	throw new ErrorMessageException(new ErrorMessage(ErrorTypes.ERROR_CONTENT_TYPE),HttpStatus.BAD_REQUEST);
-	     }
-	    BufferedImage bufferedImage = null;
-	    
-		ImageReader imageReader = null;
-		MemoryCacheImageInputStream mciis = null;
-		try{
-			Iterator<ImageReader> imageReaders = ImageIO.getImageReadersByMIMEType(contentType.getType());
-			if(imageReaders != null && imageReaders.hasNext()){
-				imageReader = imageReaders.next();
-			}
-			else{
-				throw new ErrorMessageException(new ErrorMessage(ErrorTypes.ERROR_IMAGE_PROCESS),HttpStatus.BAD_REQUEST);
-			}
-			
-			if(image.getBytes() != null){
-				mciis = new MemoryCacheImageInputStream(new ByteArrayInputStream(image.getBytes()));
-			}
-			else{
-				throw new ErrorMessageException(new ErrorMessage(ErrorTypes.ERROR_IMAGE_PROCESS),HttpStatus.BAD_REQUEST);
-			}
-			
-			if(imageReader != null && mciis != null){
-				imageReader.setInput(mciis);
-				if(imageReader.getNumImages(true) > 1){
-					throw new ErrorMessageException(new ErrorMessage(ErrorTypes.ERROR_IMAGE_UPLOAD_COUNT),HttpStatus.BAD_REQUEST);
-				}
-				bufferedImage = imageReader.read(0);
-			}
-			
-			
-		}
-		catch(Exception e){
-			throw new ErrorMessageException(new ErrorMessage(ErrorTypes.ERROR_IMAGE_PROCESS),HttpStatus.BAD_REQUEST);
-		}
-		finally{
-			if(mciis != null){
-				try {
-					mciis.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
+		imageService.uploadImage(image, imageType, productId);
+		
+		return null;
+	}
+
+
+	@Override
+	public List<ProductDTO> getProductsList(Long companyId) {
+
+		// validate inputs
+		ProductValidationDTO validateDto = ProductValidationDTO.createProductValidationCompany(companyId);
+		productValidator.validateParams(validateDto);
+		
+		return populateProductDTOList(productRepository.findByCompanyId(companyId));
+	}
+
+	@Override
+	public List<ProductDTO> getProductsList(Long companyId, Long menuId) {
+
+		// validate inputs
+		ProductValidationDTO validateDto = ProductValidationDTO.createProductValidationCompanyMenu(companyId, menuId); 
+		productValidator.validateParams(validateDto);
+		
+		return populateProductDTOList(productRepository.findByCompanyIdMenuId(companyId, menuId));
+	}
+
+	@Override
+	public ProductDTO getProductById(Long productId) {
+		
+		// validate inputs
+		ProductValidationDTO validateDto = new ProductValidationDTO(productId);
+		productValidator.validateParams(validateDto);
+		
+		return populateDtoImages(productRepository.findOne(productId));
+	}
+
+
+	@Override
+	public ProductDTO getProductById(Long companyId, Long productId) {
+		
+		// validate inputs
+		ProductValidationDTO validateDto = new ProductValidationDTO(companyId, productId);
+		productValidator.validateParams(validateDto);
+		
+		return getProductById(productId);
+	}
 	
-		
-		int width = bufferedImage.getWidth();
-		int height = bufferedImage.getHeight();
-		if(width < IMAGE_DEFAULT_WIDTH || height < IMAGE_DEFAULT_HEIGHT){
-			errors.add(new ErrorMessage(ErrorTypes.ERROR_IMAGE_TOO_SMALL.addMessageArgs(IMAGE_DEFAULT_WIDTH,IMAGE_DEFAULT_HEIGHT)));
-		}
 
-		Image imageEntity = new Image();
-
-        // image name validation
-		String imageName = image.getOriginalFilename();
-		if(imageName == null || imageName.trim().equals("")){
-			errors.add(new ErrorMessage(ErrorTypes.ERROR_IMAGE_NAME_MISSING));
-		}
-		else if(imageName.length() > MAX_IMAGE_NAME_LENGTH){
-			errors.add(new ErrorMessage(ErrorTypes.ERROR_IMAGE_NAME_LENGTH.addMessageArgs(MAX_IMAGE_NAME_LENGTH)));
-		}
+	@Override
+	public boolean exists(Long productId){
 		
-		if(!errors.isEmpty()){
-			throw new ErrorMessageException(errors,HttpStatus.BAD_REQUEST);
-		}
-		imageEntity.setContentType("JPEG");
+		if(productId == null) return false;
 		
-		imageRepository.save(imageEntity);
-		
-		Long imageId = imageEntity.getId();
-		bufferedImage = ImageManipulationUtil.resize(bufferedImage, IMAGE_DEFAULT_WIDTH, IMAGE_DEFAULT_HEIGHT);
-		
-	//	saveImage(bufferedImage, "Default", imageId);
-		
-		bufferedImage = ImageManipulationUtil.resize(bufferedImage, IMAGE_THUMBNAIL_WIDTH, IMAGE_THUMBNAIL_HEIGHT);
-		
-	//	saveImage(bufferedImage, "Thumbnail", ecardId);
-		
-		//return ecardDao.getInfoForEcardId(ecardId);
-		return null;
+		return (productRepository.findOne(productId) != null) ? true: false;
 	}
 
-	private void saveImage(BufferedImage bufferedImage, String type, Long imageId) throws IOException{
+
+	@Override
+	public boolean productBelongsToCompany(Long companyId, Long productId) {
 		
-	/*	Images imageEntry = ecardDao.getEcard(ecardId, type);
+		if(productId == null || companyId == null) return false;
 		
+		return (productRepository.findByIdAndCompanyId(productId, companyId) != null) ? true: false;
+	}
+	
+	private List<ProductDTO> populateProductDTOList(List<Product> productsList){
 		
-		if(imageEntry == null){
-			imageEntry = new Images();
-			imageEntry.setImageTypeCode(ecardDao.getImageTypeCodeByType(type));
+		if(CollectionUtils.isEmpty(productsList)) return null;
+		
+		List<ProductDTO> products = new ArrayList<ProductDTO>();
+		ProductDTO dto = null;
+		for(Product entity : productsList){
+			dto = populateDtoImages(entity);
+		
+			products.add(dto);
 		}
 		
-		imageEntry.setMediaType("image/png");
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		ImageIO.write( bufferedImage, "png", baos );
-		baos.flush();
-		byte[] imageByteArray = baos.toByteArray();
-		baos.close();
-		
-		imageEntry.setPicture(imageByteArray);
-		imagesDao.save(imageEntry);
-		
-		EcardImages ecardImage = new EcardImages();
-		ecardImage.setEcardId(ecardId);
-		ecardImage.setImagesId(imageEntry.getId());
-		
-		ecardImagesDao.save(ecardImage);
-	*/	
+		return products;
 	}
+	
+	private void removeProduct(Long productId) {
+		// TODO Auto-generated method stub
+
+	}
+	
+	
+	private ProductDTO saveProduct(ProductDTO productDto) {
+		
+		// validate inputs
+		Product product = ProductUtils.mappedEntity(productDto);
+		product = productRepository.save(product);
+		
+		return populateDtoImages(product);
+	}
+	
+	private ProductDTO populateDtoImages(Product entity){
+		
+		ProductDTO dto = ProductUtils.populateDto(entity);
+		
+		// Adding image details
+		dto.setImages(imageService.getImageIdReferences(dto.getId(), ProductConstants.PRODUCT_IMAGE_TYPES));
+		
+		return dto;
+	}
+	
 }

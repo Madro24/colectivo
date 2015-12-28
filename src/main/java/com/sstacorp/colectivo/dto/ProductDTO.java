@@ -1,50 +1,19 @@
 package com.sstacorp.colectivo.dto;
 
-import com.sstacorp.colectivo.jpa.entity.Product;
+import java.util.List;
 
 public class ProductDTO {
 	private Long id;
 	private String name;
 	private String description;
 	private Double price;
-	private Long imageId;
 	private String typeCode;
+	private String statusCode;
 	private Long companyId;
+	private List<ImageDTO> images;
 	
 	public ProductDTO() {
 		super();
-	}
-	
-	public ProductDTO(Long id, String name, String description, Double price,
-			Long imageId, String typeCode, Long companyId) {
-		super();
-		this.id = id;
-		this.name = name;
-		this.description = description;
-		this.price = price;
-		this.imageId = imageId;
-		this.typeCode = typeCode;
-		this.companyId = companyId;
-	}
-
-	public ProductDTO(Product product){
-		this.id = product.getId();
-		this.name = product.getName();
-		this.description = product.getDescription();
-		this.price = product.getPrice();
-		this.typeCode = product.getTypeCode();
-		this.companyId = product.getCompanyId();
-	}
-	
-	public Product getProductEntity(){
-		Product product = new Product();
-		product.setId(id);
-		product.setName(name);
-		product.setDescription(description);
-		product.setPrice(price);
-		product.setTypeCode(typeCode);
-		product.setCompanyId(companyId);
-		return product;
 	}
 	
 	public Long getId() {
@@ -71,12 +40,6 @@ public class ProductDTO {
 	public void setPrice(Double price) {
 		this.price = price;
 	}
-	public Long getImageId() {
-		return imageId;
-	}
-	public void setImageId(Long imageId) {
-		this.imageId = imageId;
-	}
 	public String getTypeCode() {
 		return typeCode;
 	}
@@ -88,6 +51,20 @@ public class ProductDTO {
 	}
 	public void setCompanyId(Long companyId) {
 		this.companyId = companyId;
+	}
+	public List<ImageDTO> getImages() {
+		return images;
+	}
+	public void setImages(List<ImageDTO> images) {
+		this.images = images;
+	}
+
+	public String getStatusCode() {
+		return statusCode;
+	}
+
+	public void setStatusCode(String statusCode) {
+		this.statusCode = statusCode;
 	}
 	
 	

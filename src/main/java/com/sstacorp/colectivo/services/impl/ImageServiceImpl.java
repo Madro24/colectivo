@@ -6,11 +6,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.MemoryCacheImageInputStream;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -22,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.sstacorp.colectivo.catalogs.ImageTypes;
 import com.sstacorp.colectivo.catalogs.SupportedImageTypes;
 import com.sstacorp.colectivo.constants.ImageConstants;
+import com.sstacorp.colectivo.dto.ImageDTO;
 import com.sstacorp.colectivo.errors.ErrorTypes;
 import com.sstacorp.colectivo.exceptions.ErrorMessage;
 import com.sstacorp.colectivo.exceptions.ErrorMessageException;
@@ -29,6 +32,7 @@ import com.sstacorp.colectivo.jpa.entity.Image;
 import com.sstacorp.colectivo.jpa.entity.ImageRelation;
 import com.sstacorp.colectivo.jpa.repositories.ImageRelationRepository;
 import com.sstacorp.colectivo.jpa.repositories.ImageRepository;
+import com.sstacorp.colectivo.mapping.ImageUtils;
 import com.sstacorp.colectivo.services.ImageService;
 import com.sstacorp.colectivo.util.ByteArrayStreamingOutput;
 
@@ -174,5 +178,25 @@ public class ImageServiceImpl implements ImageService {
         headers.setContentType(MediaType.parseMediaType(mediaType.getType()));
         
         return new ResponseEntity<Object>(new ByteArrayStreamingOutput(imageEntry.getImage()), headers, HttpStatus.OK);
+	}
+	
+	@Override
+	public List<ImageDTO> getImageIdReferences(Long targetId, List<ImageTypes> imageTypeList){
+	
+		if(targetId == null || CollectionUtils.isEmpty(imageTypeList)) return null;
+		
+		List<String> types = new ArrayList<String>();
+		for(ImageTypes imageType: imageTypeList){
+			types.add(imageType.getCode());
+		}
+		
+		List<ImageDTO> imagesDto = new ArrayList<ImageDTO>();
+		
+		List<ImageRelation> images = imageRelationRepository.findByTargetIdAndImageTypeCodeIn(targetId, types);
+		for(ImageRelation imageRelation : images){
+			imagesDto.add(ImageUtils.populateDTO(imageRelation));
+		}
+		
+		return imagesDto;
 	}
 }

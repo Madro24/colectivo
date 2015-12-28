@@ -5,5 +5,6 @@ public enum StatusCodes {
 	ACTIVE,
 	LOCKED,
 	SUSPENDED,
-	INACTIVE;
+	INACTIVE,
+	SOLDOUT;
 }
