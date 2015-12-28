@@ -9,6 +9,6 @@ import com.sstacorp.colectivo.jpa.entity.ImageRelation;
 public interface ImageRelationRepository extends
 		CrudRepository<ImageRelation, Long> {
 	
-	List<ImageRelation> findByTargetId(Long targetId);
-	ImageRelation findByTargetIdAndImageTypeCode(Long targetId, String imageTypeCode);
+	List<ImageRelation> findByTargetIdAndImageTypeCodeIn(Long targetId, List<String> imageTypeCodeList);
+
 }

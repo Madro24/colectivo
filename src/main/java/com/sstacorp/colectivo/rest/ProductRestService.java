@@ -1,5 +1,6 @@
 package com.sstacorp.colectivo.rest;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,9 +11,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.sstacorp.colectivo.dto.ProductDTO;
+import com.sstacorp.colectivo.services.ImageService;
 import com.sstacorp.colectivo.services.ProductService;
 
 @Controller
@@ -74,6 +78,19 @@ public class ProductRestService {
 			@RequestBody ProductDTO product) {
 		
 		productService.removeProduct(companyId, productId);
+		
+		return new ResponseEntity<Object>(HttpStatus.OK);
+ 
+	}
+	
+	@RequestMapping(value = "products/{productId}/image" , method = RequestMethod.POST)
+	public @ResponseBody ResponseEntity<Object> uploadImage(
+			@PathVariable("companyId") Long companyId, 
+			@PathVariable("productId") Long productId, 
+			@RequestParam String imageType , 
+			@RequestParam("image") MultipartFile image) throws IOException {
+		
+		productService.uploadImage(companyId, productId, imageType,image);
 		
 		return new ResponseEntity<Object>(HttpStatus.OK);
  

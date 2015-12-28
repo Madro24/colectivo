@@ -1,10 +1,12 @@
 package com.sstacorp.colectivo.catalogs;
 
 public enum ImageTypes {
-	PRODUCT("PRODUCT"),
+	PRODUCT_MAIN("PRD_MAIN"),
+	PRODUCT_EXTRA("PRD_XTRA"),
 	COMPANY_PROFILE("CIA_PRFL"),
 	PARTICIPANT_PROFILE("PAX_PRFL"),
-	BACKGROUND("BACKGROUND");
+	BACKGROUND("BACKGROUND"),
+	;
 	
 	private String code;
 	

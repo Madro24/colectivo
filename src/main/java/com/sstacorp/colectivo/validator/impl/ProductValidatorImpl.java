@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import com.sstacorp.colectivo.catalogs.ProductTypes;
@@ -12,6 +13,7 @@ import com.sstacorp.colectivo.constants.ProductConstants;
 import com.sstacorp.colectivo.dto.ProductDTO;
 import com.sstacorp.colectivo.errors.ErrorTypes;
 import com.sstacorp.colectivo.exceptions.ErrorMessage;
+import com.sstacorp.colectivo.exceptions.ErrorUtil;
 import com.sstacorp.colectivo.services.ProductService;
 import com.sstacorp.colectivo.validation.dto.ProductValidationDTO;
 import com.sstacorp.colectivo.validator.CompanyValidator;
@@ -65,6 +67,7 @@ public class ProductValidatorImpl implements ProductValidator{
 			this.validateCompanysProduct(validateDto.getProductDto().getCompanyId(), validateDto.getProductDto().getId(),errors);
 			break;
 		}	
+		ErrorUtil.handleErrors(errors, HttpStatus.BAD_REQUEST);
 	}
 
 

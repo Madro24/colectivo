@@ -1,5 +1,6 @@
 package com.sstacorp.colectivo.services.impl;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,10 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.sstacorp.colectivo.catalogs.ImageTypes;
+import com.sstacorp.colectivo.constants.ProductConstants;
 import com.sstacorp.colectivo.dto.ProductDTO;
 import com.sstacorp.colectivo.jpa.entity.Product;
 import com.sstacorp.colectivo.jpa.repositories.ProductRepository;
 import com.sstacorp.colectivo.mapping.ProductUtils;
+import com.sstacorp.colectivo.services.ImageService;
 import com.sstacorp.colectivo.services.ProductService;
 import com.sstacorp.colectivo.validation.dto.ProductValidationDTO;
 import com.sstacorp.colectivo.validator.ComponentValidator;
@@ -21,6 +25,9 @@ public class ProductServiceImpl implements ProductService {
 
 	@Autowired
 	ProductRepository productRepository;
+	
+	@Autowired
+	ImageService imageService;
 	
 	@Autowired
 	ComponentValidator<ProductValidationDTO> productValidator;
@@ -57,15 +64,21 @@ public class ProductServiceImpl implements ProductService {
 
 	}
 
-	@Override
-	public ProductDTO changeImageProduct(Long Id, MultipartFile image) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
-	public Long uploadImage(MultipartFile image) {
+	public Long uploadImage(Long companyId, Long productId, String imageType, MultipartFile image) throws IOException {
 
+		// validate inputs
+		ProductValidationDTO validateDto = new ProductValidationDTO(companyId, productId);
+		productValidator.validateParams(validateDto);
+		
+		// default image type
+		if(imageType == null || imageType.isEmpty()){
+			imageType = ImageTypes.PRODUCT_MAIN.getCode();
+		}
+		
+		imageService.uploadImage(image, imageType, productId);
+		
 		return null;
 	}
 
@@ -97,7 +110,7 @@ public class ProductServiceImpl implements ProductService {
 		ProductValidationDTO validateDto = new ProductValidationDTO(productId);
 		productValidator.validateParams(validateDto);
 		
-		return ProductUtils.populateDto(productRepository.findOne(productId));
+		return populateDtoImages(productRepository.findOne(productId));
 	}
 
 
@@ -136,7 +149,8 @@ public class ProductServiceImpl implements ProductService {
 		List<ProductDTO> products = new ArrayList<ProductDTO>();
 		ProductDTO dto = null;
 		for(Product entity : productsList){
-			dto = ProductUtils.populateDto(entity);
+			dto = populateDtoImages(entity);
+		
 			products.add(dto);
 		}
 		
@@ -155,7 +169,17 @@ public class ProductServiceImpl implements ProductService {
 		Product product = ProductUtils.mappedEntity(productDto);
 		product = productRepository.save(product);
 		
-		return ProductUtils.populateDto(product);
+		return populateDtoImages(product);
+	}
+	
+	private ProductDTO populateDtoImages(Product entity){
+		
+		ProductDTO dto = ProductUtils.populateDto(entity);
+		
+		// Adding image details
+		dto.setImages(imageService.getImageIdReferences(dto.getId(), ProductConstants.PRODUCT_IMAGE_TYPES));
+		
+		return dto;
 	}
 	
 }
