@@ -3,6 +3,7 @@ package com.sstacorp.colectivo.services.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import com.sstacorp.colectivo.jpa.entity.Menu;
 import com.sstacorp.colectivo.jpa.repositories.MenuRepository;
 import com.sstacorp.colectivo.mapping.MenuUtils;
 import com.sstacorp.colectivo.services.CompanyService;
+import com.sstacorp.colectivo.services.MenuContentService;
 import com.sstacorp.colectivo.services.MenuService;
 import com.sstacorp.colectivo.validation.dto.MenuValidationDTO;
 import com.sstacorp.colectivo.validator.ComponentValidator;
@@ -24,6 +26,9 @@ public class MenuServiceImpl implements MenuService {
 
 	@Autowired
 	CompanyService companyService;
+	
+	@Autowired
+	MenuContentService menuContentService;
 	
 	@Autowired
 	ComponentValidator<MenuValidationDTO> menuValidator;
@@ -60,7 +65,11 @@ public class MenuServiceImpl implements MenuService {
 		
 		Menu createdMenu = menuRepository.save(MenuUtils.mappedEntity(menu));
 		
-		return MenuUtils.populateDto(createdMenu);
+		menu = MenuUtils.populateDto(createdMenu);
+
+		menuContentService.addMenuContent(menu);
+		
+		return menu;
 	}
 
 	@Override
@@ -70,7 +79,11 @@ public class MenuServiceImpl implements MenuService {
 		
 		Menu createdMenu = menuRepository.save(MenuUtils.mappedEntity(menu));
 		
-		return MenuUtils.populateDto(createdMenu);
+		menu = MenuUtils.populateDto(createdMenu);
+
+		menuContentService.addMenuContent(menu);
+		
+		return menu;
 	}
 
 	@Override
@@ -85,5 +98,7 @@ public class MenuServiceImpl implements MenuService {
 		
 		return (menuRepository.findOne(menuId)) != null ? true : false ; 
 	}
+	
+	
 
 }
