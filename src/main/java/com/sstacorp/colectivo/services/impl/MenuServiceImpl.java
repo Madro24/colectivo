@@ -40,12 +40,20 @@ public class MenuServiceImpl implements MenuService {
 		
 		List<Menu> menus = menuRepository.findByCompanyId(companyId);
 		
-		List<MenuDTO> menusDto = new ArrayList<MenuDTO>();
+		List<MenuDTO> menusDtoList = new ArrayList<MenuDTO>();
+		MenuDTO menuDto = null;
+		
 		for(Menu menu : menus){
-			menusDto.add(MenuUtils.populateDto(menu));
+			
+			menuDto = MenuUtils.populateDto(menu);
+			
+			// Populating menu content.
+			menuDto.setProducts(menuContentService.getMenuContent(menuDto.getId()));
+			
+			menusDtoList.add(menuDto);	
 		}
 		
-		return menusDto;
+		return menusDtoList;
 	}
 
 	@Override
@@ -54,7 +62,12 @@ public class MenuServiceImpl implements MenuService {
 		// using HttpMethod.TRACE only to differ from getMenusByCompany validations.
 		menuValidator.validateParams(new MenuValidationDTO(companyId,menuId,HttpMethod.TRACE));
 		
-		return MenuUtils.populateDto(menuRepository.findOne(menuId));
+		MenuDTO menuDto = MenuUtils.populateDto(menuRepository.findOne(menuId));
+		
+		// Populating menu content.
+		menuDto.setProducts(menuContentService.getMenuContent(menuId));
+		
+		return menuDto;
 
 	}
 
@@ -65,9 +78,12 @@ public class MenuServiceImpl implements MenuService {
 		
 		Menu createdMenu = menuRepository.save(MenuUtils.mappedEntity(menu));
 		
-		menu = MenuUtils.populateDto(createdMenu);
-
-		menuContentService.addMenuContent(menu);
+		// Adding menu content
+		if(createdMenu != null){
+					
+			menu.setId(createdMenu.getId());
+			menuContentService.addMenuContent(menu);
+		}
 		
 		return menu;
 	}
@@ -79,9 +95,12 @@ public class MenuServiceImpl implements MenuService {
 		
 		Menu createdMenu = menuRepository.save(MenuUtils.mappedEntity(menu));
 		
-		menu = MenuUtils.populateDto(createdMenu);
-
-		menuContentService.addMenuContent(menu);
+		// Updating menu content
+		if(createdMenu != null){
+			
+			menu.setId(createdMenu.getId());
+			menuContentService.addMenuContent(menu);
+		}
 		
 		return menu;
 	}
