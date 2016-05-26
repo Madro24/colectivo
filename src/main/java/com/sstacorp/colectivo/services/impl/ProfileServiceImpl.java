@@ -46,7 +46,7 @@ public class ProfileServiceImpl implements ProfileService {
 
 		SysUserDTO sysUserDTO = profileRequest.getSysUser();
 		SysUser sysUser = sysUserRepository.save(populateSysUserEntity(
-				new SysUser(), sysUserDTO, participant.getId()));
+				new SysUser(), sysUserDTO, participant));
 
 		return new ProfileUserDTO(populateSysUserDTO(sysUser),
 				populateParticipantDTO(participant));
@@ -64,7 +64,7 @@ public class ProfileServiceImpl implements ProfileService {
 		SysUserDTO sysUserDTO = profileRequest.getSysUser();
 		SysUser sysUser = sysUserRepository.findOne(sysUserDTO.getId());
 		sysUser = sysUserRepository.save(populateSysUserEntity(sysUser,
-				sysUserDTO, participant.getId()));
+				sysUserDTO, participant));
 
 		return new ProfileUserDTO(populateSysUserDTO(sysUser),
 				populateParticipantDTO(participant));
@@ -89,7 +89,7 @@ public class ProfileServiceImpl implements ProfileService {
 
 		return new SysUserDTO(sysUser.getId(), sysUser.getUsername(),
 				sysUser.getPassword(), sysUser.getStatusCode(),
-				sysUser.getParticipantId());
+				sysUser.getParticipant().getId());
 	}
 
 	private Participant populateParticipantEntity(Participant participant,
@@ -106,7 +106,7 @@ public class ProfileServiceImpl implements ProfileService {
 	}
 
 	private SysUser populateSysUserEntity(SysUser sysUser,
-			SysUserDTO sysUserDTO, Long participantId) {
+			SysUserDTO sysUserDTO, Participant participant) {
 		if (sysUserDTO != null) {
 			if (sysUserDTO.getUsername() != null)
 				sysUser.setUsername(sysUserDTO.getUsername());
@@ -114,8 +114,8 @@ public class ProfileServiceImpl implements ProfileService {
 				sysUser.setPassword(sysUserDTO.getPassword());
 			if (sysUser.getStatusCode() == null)
 				sysUser.setStatusCode(StatusCodes.NEW.toString());
-			if (participantId != null)
-				sysUser.setParticipantId(participantId);
+			if (participant != null)
+				sysUser.setParticipant(participant);
 		}
 		return sysUser;
 	}
@@ -136,7 +136,7 @@ public class ProfileServiceImpl implements ProfileService {
 	private SysUserDTO populateSysUserDTO(SysUser sysUser) {
 		return new SysUserDTO(sysUser.getId(), sysUser.getUsername(),
 				sysUser.getPassword(), // encrypt password.
-				sysUser.getStatusCode(), sysUser.getParticipantId());
+				sysUser.getStatusCode(), sysUser.getParticipant().getId());
 	}
 
 	private void validateRequestParticipant(ProfileUserDTO profileUser,

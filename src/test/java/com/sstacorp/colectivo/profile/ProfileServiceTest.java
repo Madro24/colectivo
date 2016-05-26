@@ -77,7 +77,7 @@ public class ProfileServiceTest extends TestCase {
 		
 		//setup mockito
 		PowerMockito.when(mockedParticipantRepository.save(any(Participant.class))).thenReturn(populateParticipantEntity(new Participant(), expectedParticipant));
-		PowerMockito.when(mockedSysUserRepository.save(any(SysUser.class))).thenReturn(populateSysUserEntity(new SysUser(),expectedSysUser,1L));
+		PowerMockito.when(mockedSysUserRepository.save(any(SysUser.class))).thenReturn(populateSysUserEntity(new SysUser(),expectedSysUser,new Participant()));
 		
 		ProfileUserDTO profileResult = profileService.createParticipant(participantRequest);
 		assertNotNull(profileResult.getSysUser());
@@ -205,7 +205,7 @@ public class ProfileServiceTest extends TestCase {
 		return participant;
 	}
 	
-	private SysUser populateSysUserEntity(SysUser sysUser,SysUserDTO sysUserDTO,Long participantId) {
+	private SysUser populateSysUserEntity(SysUser sysUser,SysUserDTO sysUserDTO,Participant participant) {
 		if (sysUserDTO != null) {
 			sysUser.setId(1L);
 			if(sysUserDTO.getUsername() != null)
@@ -214,8 +214,8 @@ public class ProfileServiceTest extends TestCase {
 				sysUser.setPassword(sysUserDTO.getPassword());
 			if(sysUser.getStatusCode() == null)
 				sysUser.setStatusCode(StatusCodes.NEW.toString());
-			if(participantId != null)
-				sysUser.setParticipantId(participantId);
+			if(participant != null)
+				sysUser.setParticipant(participant);
 		}
 		return sysUser;
 	}

@@ -36,11 +36,12 @@
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
 		<param-value>
-			/WEB-INF/spring/security/spring-security.xml
+			/WEB-INF/spring/appServlet/servlet-context.xml
+			,/WEB-INF/spring/security/spring-security.xml
 		</param-value>
 	</context-param>
 	
-	<!-- Spring Security -->
+	Spring Security
 	<filter>
 		<filter-name>springSecurityFilterChain</filter-name>
 		<filter-class>org.springframework.web.filter.DelegatingFilterProxy

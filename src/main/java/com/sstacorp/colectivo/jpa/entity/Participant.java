@@ -1,5 +1,6 @@
 package com.sstacorp.colectivo.jpa.entity;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -10,7 +11,10 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "PARTICIPANT")
-public class Participant extends EntityTrackProperties{
+public class Participant extends EntityTrackProperties implements Serializable{
+
+	private static final long serialVersionUID = 1273515063478651721L;
+
 	@Id
 	@GeneratedValue
 	private Long id;
