@@ -2,6 +2,7 @@ package com.sstacorp.colectivo.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.LockedException;
@@ -26,6 +27,7 @@ public class HelloController {
 		return model;
 	}
 	
+	@Secured("ROLE_ADMIN")
 	@RequestMapping(value = "/admin**", method = RequestMethod.GET)
 	public ModelAndView adminPage(){
 		ModelAndView model = new ModelAndView();

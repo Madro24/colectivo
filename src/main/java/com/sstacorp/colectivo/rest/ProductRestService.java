@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -52,6 +53,7 @@ public class ProductRestService {
 		return new ResponseEntity<List<ProductDTO>> (productService.getProductsList(companyId, menuId), HttpStatus.OK);
 	}
 	
+	@Secured("ROLE_ADMIN")
 	@RequestMapping(value = "products", method = RequestMethod.POST)
 	public @ResponseBody ResponseEntity<ProductDTO>  postCreateProduct(
 			@PathVariable("companyId") Long companyId,
@@ -61,6 +63,7 @@ public class ProductRestService {
  
 	}
 	
+	@Secured("ROLE_ADMIN")
 	@RequestMapping(value = "products/{productId}", method = RequestMethod.PUT)
 	public @ResponseBody ResponseEntity<ProductDTO>  putUpdateProduct(
 			@PathVariable("companyId") Long companyId,
@@ -71,6 +74,7 @@ public class ProductRestService {
  
 	}
 	
+	@Secured("ROLE_ADMIN")
 	@RequestMapping(value = "products/{productId}", method = RequestMethod.DELETE)
 	public @ResponseBody ResponseEntity<Object>  deleteProduct(
 			@PathVariable("companyId") Long companyId,
@@ -83,6 +87,7 @@ public class ProductRestService {
  
 	}
 	
+	@Secured("ROLE_ADMIN")
 	@RequestMapping(value = "products/{productId}/image" , method = RequestMethod.POST)
 	public @ResponseBody ResponseEntity<Object> uploadImage(
 			@PathVariable("companyId") Long companyId, 

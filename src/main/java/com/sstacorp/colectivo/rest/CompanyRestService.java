@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -42,6 +43,7 @@ public class CompanyRestService {
  
 	}
 	
+	@Secured("ROLE_ADMIN")
 	@RequestMapping(method = RequestMethod.POST)
 	public @ResponseBody ResponseEntity<CompanyDTO> createCompany(@RequestBody CompanyDTO companyDto) {
 		
@@ -49,6 +51,7 @@ public class CompanyRestService {
  
 	}
 	
+	@Secured("ROLE_ADMIN")
 	@RequestMapping(value = "{companyId}" , method = RequestMethod.PUT)
 	public @ResponseBody ResponseEntity<CompanyDTO> updateCompany(@PathVariable("companyId") Long companyId, @RequestBody CompanyDTO companyDto) {
 		
@@ -56,6 +59,7 @@ public class CompanyRestService {
  
 	}
 	
+	@Secured("ROLE_ADMIN")
 	@RequestMapping(value = "{companyId}/image" , method = RequestMethod.POST)
 	public @ResponseBody ResponseEntity<Object> uploadImage(@PathVariable("companyId") Long companyId, @RequestParam String imageType , @RequestParam("image") MultipartFile image) throws IOException {
 		

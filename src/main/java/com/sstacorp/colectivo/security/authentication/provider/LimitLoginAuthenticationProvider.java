@@ -15,7 +15,8 @@ import org.springframework.stereotype.Component;
 import com.sstacorp.colectivo.jpa.entity.LoginHistory;
 import com.sstacorp.colectivo.security.dao.UserDetailsDao;
 
-@Component
+@Component 
+@Qualifier("limitLoginAuthenticationProvider")
 public class LimitLoginAuthenticationProvider extends DaoAuthenticationProvider {
 	@Autowired
 	UserDetailsDao userDetailsDao;

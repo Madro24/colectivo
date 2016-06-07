@@ -3,7 +3,7 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee 
 	http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 
-	<display-name>Spring Web MVC Application</display-name>
+	<display-name>Colectivo Application</display-name>
      
     <!-- The definition of the Root Spring Container shared by all Servlets and Filters -->
 <!--     <context-param>
@@ -32,16 +32,27 @@
         <url-pattern>/</url-pattern>
     </servlet-mapping>
 
+    <!-- Spring root -->
+    <context-param>
+        <param-name>contextClass</param-name>
+        <param-value>
+         org.springframework.web.context.support.AnnotationConfigWebApplicationContext
+      </param-value>
+    </context-param>
 	<!-- Loads Spring Security config file -->
 	<context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>com.sstacorp.colectivo.security.apiconfig</param-value>
+    </context-param>
+<!-- 	<context-param>
 		<param-name>contextConfigLocation</param-name>
 		<param-value>
 			/WEB-INF/spring/appServlet/servlet-context.xml
 			,/WEB-INF/spring/security/spring-security.xml
 		</param-value>
 	</context-param>
-	
-	Spring Security
+	 -->
+	<!-- Spring Security -->
 	<filter>
 		<filter-name>springSecurityFilterChain</filter-name>
 		<filter-class>org.springframework.web.filter.DelegatingFilterProxy

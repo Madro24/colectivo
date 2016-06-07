@@ -71,7 +71,7 @@ public class SysUser extends EntityTrackProperties implements UserDetails {
 		this.statusCode = statusCode;
 	}
 
-	
+	// Spring Security UserDetails methods
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		return AuthorityUtils.createAuthorityList(participant.getRoleCode());

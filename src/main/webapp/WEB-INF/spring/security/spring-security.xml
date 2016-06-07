@@ -5,21 +5,31 @@
 	http://www.springframework.org/schema/security
 	http://www.springframework.org/schema/security/spring-security-3.2.xsd">
 
-	<http use-expressions="true" auto-config="true">
-		<intercept-url pattern="/admin**" access="hasRole('ROLE_ADMIN')" />
-	
-		<!-- access denied page -->
-		<access-denied-handler error-page="/403" />
-		<form-login login-page="/login" default-target-url="/welcome"
-			authentication-failure-url="/login?error" username-parameter="username"
-			password-parameter="password" />
+	<http use-expressions="true" entry-point-ref="restAuthenticationEntryPoint">
+		<intercept-url pattern="/**" />
+		<form-login authentication-success-handler-ref="mySuccessHandler"
+			login-page="/login" 
+			default-target-url="/welcome"
+			authentication-failure-url="/login?error"
+			username-parameter="username"
+			password-parameter="password"/>
+			<!-- authentication-failure-handler-ref="myFailureHandler" -->
 		<logout logout-success-url="/login?logout" />
-		<!-- enable csrf protection -->
-		<csrf />
 	</http>
+	
+	<!-- Connect the custom authentication success handler -->
+    <beans:bean id="mySuccessHandler"
+        class="com.sstacorp.colectivo.security.apiconfig.RestAuthenticationSuccessHandler" />
+    <!-- Using default failure handler -->
+   <!--  <beans:bean id="myFailureHandler"
+        class="org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler" /> -->
+ 
 
 	<authentication-manager>
 		<authentication-provider ref="limitLoginAuthenticationProvider" />
 	</authentication-manager>
 
+    <!-- Enable the annotations for defining the secure role -->
+    <global-method-security secured-annotations="enabled" />
+    
 </beans:beans>

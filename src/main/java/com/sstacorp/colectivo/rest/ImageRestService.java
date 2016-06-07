@@ -5,6 +5,7 @@ import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +23,7 @@ public class ImageRestService {
 	@Autowired
 	ImageService imageService;
 	
+	@Secured("ROLE_ADMIN")
 	@RequestMapping( method = RequestMethod.POST)
 	public @ResponseBody ResponseEntity<Object> uploadImage( 
 			@RequestParam("image") MultipartFile image,
