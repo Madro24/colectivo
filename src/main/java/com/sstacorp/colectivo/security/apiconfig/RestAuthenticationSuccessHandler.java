@@ -23,7 +23,6 @@ public class RestAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuc
 
 		if (savedRequest == null) {
 			clearAuthenticationAttributes(request);
-			getRedirectStrategy().sendRedirect(request, response, getDefaultTargetUrl());
 			return;
 		}
 		final String targetUrlParameter = getTargetUrlParameter();

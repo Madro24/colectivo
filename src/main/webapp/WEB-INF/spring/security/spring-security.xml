@@ -5,27 +5,32 @@
 	http://www.springframework.org/schema/security
 	http://www.springframework.org/schema/security/spring-security-3.2.xsd">
 
-	<http use-expressions="true" entry-point-ref="restAuthenticationEntryPoint">
-		<intercept-url pattern="/**" />
-		<form-login authentication-success-handler-ref="mySuccessHandler"
-			login-page="/login" 
-			default-target-url="/welcome"
-			authentication-failure-url="/login?error"
-			username-parameter="username"
+
+    <!-- Rest authentication entry point configuration -->
+    <http use-expressions="true" create-session="stateless"
+        entry-point-ref="restServicesEntryPoint" authentication-manager-ref="authenticationManagerForRest">
+        <intercept-url pattern="/**" />
+        <form-login 
+        	authentication-success-handler-ref="mySuccessHandler" 
+        	username-parameter="username"
 			password-parameter="password"/>
-			<!-- authentication-failure-handler-ref="myFailureHandler" -->
-		<logout logout-success-url="/login?logout" />
-	</http>
-	
-	<!-- Connect the custom authentication success handler -->
+        <access-denied-handler ref="myAuthenticationAccessDeniedHandler" />
+        <http-basic />
+    </http>
+    
+    <!-- Entry point for REST service. -->
+    <beans:bean id="restServicesEntryPoint"
+        class="com.sstacorp.colectivo.security.apiconfig.RestAuthenticationEntryPoint" />
+ 
+    <!-- Connect the custom authentication success handler -->
     <beans:bean id="mySuccessHandler"
         class="com.sstacorp.colectivo.security.apiconfig.RestAuthenticationSuccessHandler" />
-    <!-- Using default failure handler -->
-   <!--  <beans:bean id="myFailureHandler"
-        class="org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler" /> -->
  
-
-	<authentication-manager>
+    <!-- Using Authentication Access Denied handler -->
+    <beans:bean id="myAuthenticationAccessDeniedHandler"
+        class="com.sstacorp.colectivo.security.apiconfig.RestAuthenticationAccessDeniedHandler" />
+ 
+	<authentication-manager alias="authenticationManagerForRest">
 		<authentication-provider ref="limitLoginAuthenticationProvider" />
 	</authentication-manager>
 
